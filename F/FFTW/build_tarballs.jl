@@ -1,11 +1,11 @@
-using BinaryBuilder
+using BinaryBuilder, Pkg
 
 name = "FFTW"
 version = v"3.3.9"
 
 # Collection of sources required to build FFTW
 sources = [
-   ArchiveSource("http://fftw.org/fftw-$(version).tar.gz",	
+   ArchiveSource("http://fftw.org/fftw-$(version).tar.gz",
                   "bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d"),
 ]
 
@@ -20,7 +20,7 @@ FLAGS=(
     --host="${target}"
     --enable-shared
     --disable-static
-    --disable-mpi
+    --enable-mpi
     --disable-doc
     --enable-threads
     --with-combined-threads
@@ -80,6 +80,10 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = Dependency[
+    Dependency(PackageSpec(name="MPItrampoline_jll",
+                           uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
+                           path="/Users/eschnett/.julia/dev/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 
 # Build the tarballs.
