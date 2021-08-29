@@ -25,6 +25,8 @@ atomic_patch -p1 ${WORKSPACE}/srcdir/patches/shlwapi.patch
 atomic_patch -p1 ${WORKSPACE}/srcdir/patches/sockaddr_in.patch
 # PR <https://github.com/ornladios/ADIOS2/issues/2808>
 atomic_patch -p1 ${WORKSPACE}/srcdir/patches/adios2_init_config_serial.patch
+# PR <https://github.com/ornladios/ADIOS2/pull/2825>
+atomic_patch -p1 ${WORKSPACE}/srcdir/patches/mpi-constants.patch
 
 mkdir build
 cd build
@@ -86,12 +88,14 @@ platforms = expand_gfortran_versions(platforms)
 
 # The products that we will ensure are always built
 products = [
+    ExecutableProduct("bpls", :bpls),
+
+    # Missing on at least one platform:
     # ExecutableProduct("adios_deactivate_bp", :adios_deactivate_bp),
     # ExecutableProduct("adios_iotest", :adios_iotest),
     # ExecutableProduct("adios_reorganize", :adios_reorganize),
     # ExecutableProduct("adios_reorganize_mpi", :adios_reorganize_mpi),
     # ExecutableProduct("bp4dbg", :bp4dbg),
-    ExecutableProduct("bpls", :bpls),
     # ExecutableProduct("sst_conn_tool", :sst_conn_tool),
 
     LibraryProduct("libadios2_c", :libadios2_c),
@@ -119,7 +123,10 @@ dependencies = [
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae")),
     # We cannot use HDF5 because we need an HDF5 configuration with MPI support
     # Dependency(PackageSpec(name="HDF5_jll")),
-    Dependency(PackageSpec(name="MPICH_jll")),
+    #TODO Dependency(PackageSpec(name="MPICH_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll",
+                           uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
+                           path="/Users/eschnett/.julia/dev/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
     Dependency(PackageSpec(name="ZeroMQ_jll")),
     Dependency(PackageSpec(name="libpng_jll")),
@@ -129,4 +136,5 @@ dependencies = [
 # Build the tarballs, and possibly a `build.jl` as well.
 # GCC 4 is too old for Windows; it doesn't have <regex.h>
 # GCC 5 is too old for FreeBSD; it doesn't have `std::to_string`
-build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; preferred_gcc_version=v"6")
+build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies;
+               preferred_gcc_version=v"6")

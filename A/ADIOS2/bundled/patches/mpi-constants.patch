@@ -1,0 +1,23 @@
+--- a/source/adios2/helper/adiosCommMPI.cpp
++++ b/source/adios2/helper/adiosCommMPI.cpp
+@@ -74,17 +74,13 @@
+     }
+ 
+     std::string error;
+-    switch (value)
+-    {
+-    case MPI_ERR_COMM:
++    if (value == MPI_ERR_COMM) {
+         error = "MPI_ERR_COMM";
+-        break;
+-    case MPI_ERR_INTERN:
++    } else if (value == MPI_ERR_INTERN) {
+         error = "MPI_ERR_INTERN";
+-        break;
+-    default:
++    } else {
+         error = "MPI_ERR number: " + std::to_string(value);
+     }
+ 
+     throw std::runtime_error("ERROR: ADIOS2 detected " + error + ", " + hint);
+ }
