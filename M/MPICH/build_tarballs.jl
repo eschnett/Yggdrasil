@@ -55,6 +55,13 @@ if [[ "${target}" == aarch64-apple-* ]]; then
     export FFLAGS=-fallow-argument-mismatch
 fi
 
+if [[ "${target}" == *-apple_* ]]; then
+    # MPICH uses the link options `-flat_namespace` on Darwin. This conflicts
+    # with MPItrampoline, which requires the option
+    # `-twolevel_namespace` (which is also the default).
+    EXTRA_FLAGS+=(--enable-two-level-namespace)
+fi
+
 ./configure --prefix=${prefix} --build=${MACHTYPE} --host=${target} \
     --enable-shared=yes --enable-static=no \
     --with-device=ch3 --disable-dependency-tracking \
