@@ -3,12 +3,12 @@
 using BinaryBuilder, Pkg
 
 name = "MPItrampoline"
-version = v"1.0.0"
+version = v"1.1.0"
 
 # Collection of sources required to complete build
 sources = [
-    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/d31bba9c3de5b37049bf3dc5343122dca264841a.tar.gz",
-                  "ba1646970ae6923d35b5b3aed8018c4e129386955a4a9bea41a1846d9b23e98b"),
+    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/refs/tags/v1.1.0.tar.gz",
+                  "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
 ]
 
 # Bash recipe for building across all platforms
@@ -49,7 +49,9 @@ products = [
     ExecutableProduct("mpifort", :mpifort),
     ExecutableProduct("mpiexec", :mpiexec),
 
-    LibraryProduct("libmpitrampoline", :libmpitrampoline),
+    # We need to call this library `:libmpi` in Julia so that Julia's
+    # `MPI.jl` will find it
+    LibraryProduct("libmpi", :libmpi),
 ]
 
 # Dependencies that must be installed before this package can be built
