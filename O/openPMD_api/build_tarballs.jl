@@ -45,6 +45,7 @@ fi
 cmake \
     -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
     -DCMAKE_FIND_ROOT_PATH=$prefix \
+    -DopenPMD_USE_JULIA=ON \
     -DJulia_PREFIX=$prefix \
     -DopenPMD_USE_MPI=ON \
     -DMPI_HOME=$prefix \
