@@ -38,7 +38,8 @@ if [[ "$target" == *-apple-* ]]; then
     # cmake doesn't know how to handle the "-framework OpenCL" option
     # and wants to use "-framework" as a stand-alone option. This fails
     # gloriously, and cmake concludes that MPI is not available.
-    archopts="-DMPI_C_ADDITIONAL_INCLUDE_DIRS='' -DMPI_C_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi' -DMPI_CXX_ADDITIONAL_INCLUDE_DIRS='' -DMPI_CXX_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi'"
+    # archopts="-DMPI_C_ADDITIONAL_INCLUDE_DIRS='' -DMPI_C_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi' -DMPI_CXX_ADDITIONAL_INCLUDE_DIRS='' -DMPI_CXX_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi'"
+    archopts=''
 elif [[ "$target" == x86_64-w64-mingw32 ]]; then
     # - The MSMPI Fortran bindings are missing a function; see
     #   <https://github.com/microsoft/Microsoft-MPI/issues/7>
@@ -126,7 +127,7 @@ dependencies = [
     #TODO Dependency(PackageSpec(name="MPICH_jll")),
     Dependency(PackageSpec(name="MPItrampoline_jll",
                            uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
-                           path="/Users/eschnett/.julia/dev/MPItrampoline_jll")),
+                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
     Dependency(PackageSpec(name="ZeroMQ_jll")),
     Dependency(PackageSpec(name="libpng_jll")),

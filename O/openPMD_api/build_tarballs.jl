@@ -13,8 +13,8 @@ sources = [
     #               "46c013be5cda670f21969675ce839315d4f5ada0406a6546a91ec3441402cf5e"),
     # We temporarily use a feature branch instead of a released
     # version because the Julia bindings are not release yet
-    ArchiveSource("https://github.com/eschnett/openPMD-api/archive/0df99cc11cfe7555e6d099d62b4016412b650f34.tar.gz",
-                  "421538de3a8cba2171a1f2deb5774a340896aa4579e77178a9df27b634fb980d"),
+    ArchiveSource("https://github.com/eschnett/openPMD-api/archive/46a7b004f494bc036ecfef52e6b00f04fd4e232e.tar.gz",
+                  "cc961ae51074e713cb9839ca6078af1cfccba376857b4e7c02efb50d83bfcde8"),
 ]
 
 # Bash recipe for building across all platforms
@@ -31,7 +31,8 @@ if [[ "$target" == *-apple-* ]]; then
     # cmake doesn't know how to handle the "-framework OpenCL" option
     # and wants to use "-framework" as a stand-alone option. This fails,
     # and cmake concludes that MPI is not available.
-    mpiopts="-DMPI_C_ADDITIONAL_INCLUDE_DIRS='' -DMPI_C_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi' -DMPI_CXX_ADDITIONAL_INCLUDE_DIRS='' -DMPI_CXX_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi'"
+    # mpiopts="-DMPI_C_ADDITIONAL_INCLUDE_DIRS='' -DMPI_C_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi' -DMPI_CXX_ADDITIONAL_INCLUDE_DIRS='' -DMPI_CXX_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi'"
+    mpiopts=""
 elif [[ "$target" == x86_64-w64-mingw32 ]]; then
     mpiopts="-DMPI_GUESS_LIBRARY_NAME=MSMPI -DMPI_C_LIBRARIES=msmpi64 -DMPI_CXX_LIBRARIES=msmpi64"
 elif [[ "$target" == *-mingw* ]]; then
@@ -78,14 +79,14 @@ dependencies = [
     #TODO Dependency(PackageSpec(name="ADIOS2_jll")),
     Dependency(PackageSpec(name="ADIOS2_jll",
                            uuid="44b1415a-b224-5c99-9168-ff4febb5f37f",
-                           path="/Users/eschnett/.julia/dev/ADIOS2_jll")),
+                           path="$(ENV["HOME"])/.julia/dev/ADIOS2_jll")),
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae")),
     # We would need a parallel version of HDF5
     # Dependency(PackageSpec(name="HDF5_jll")),
     #TODO Dependency(PackageSpec(name="MPICH_jll")),
     Dependency(PackageSpec(name="MPItrampoline_jll",
                            uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
-                           path="/Users/eschnett/.julia/dev/MPItrampoline_jll")),
+                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
     Dependency(PackageSpec(name="libcxxwrap_julia_jll")),
 ]

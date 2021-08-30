@@ -82,7 +82,7 @@ products = [
 dependencies = Dependency[
     Dependency(PackageSpec(name="MPItrampoline_jll",
                            uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
-                           path="/Users/eschnett/.julia/dev/MPItrampoline_jll")),
+                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 
