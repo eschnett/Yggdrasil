@@ -3,11 +3,11 @@
 using BinaryBuilder, Pkg
 
 name = "AMReX"
-version = v"21.7.0"
+version = v"21.9.0"
 
 # Collection of sources required to complete build
 sources = [
-    ArchiveSource("https://github.com/AMReX-Codes/amrex/releases/download/21.07/amrex-21.07.tar.gz",
+    ArchiveSource("https://github.com/AMReX-Codes/amrex/releases/download/21.09/amrex-21.09.tar.gz",
                   "9630b8c0c7ffbf3f5ea4d973a3fdb40b9b10fec0f8df33b9e24d76d2c1d15771"),
     DirectorySource("./bundled"),
 ]
@@ -33,6 +33,7 @@ if [[ "$target" == *-apple-* ]]; then
     # and wants to use "-framework" as a stand-alone option. This fails,
     # and cmake concludes that MPI is not available.
     mpiopts="-DMPI_C_ADDITIONAL_INCLUDE_DIRS='' -DMPI_C_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi' -DMPI_CXX_ADDITIONAL_INCLUDE_DIRS='' -DMPI_CXX_LIBRARIES='-Wl,-flat_namespace;-Wl,-commons,use_dylibs;-lmpi;-lpmpi'"
+    mpiopts="-DMPI_HOME=$prefix"
 elif [[ "$target" == x86_64-w64-mingw32 ]]; then
     mpiopts="-DMPI_HOME=$prefix -DMPI_GUESS_LIBRARY_NAME=MSMPI -DMPI_C_LIBRARIES=msmpi64 -DMPI_CXX_LIBRARIES=msmpi64"
 elif [[ "$target" == *-mingw* ]]; then
@@ -71,7 +72,10 @@ dependencies = [
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae")),
     # AMReX's cmake stage fails with OpenMPI on almost all architectures
     # Dependency(PackageSpec(name="OpenMPI_jll", uuid="fe0851c0-eecd-5654-98d4-656369965a5c")),
-    Dependency(PackageSpec(name="MPICH_jll")),
+    #TODO Dependency(PackageSpec(name="MPICH_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll",
+                           uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
+                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 
