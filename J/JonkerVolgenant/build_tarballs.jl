@@ -1,22 +1,20 @@
 # Note that this script can accept some limited command-line arguments, run
 # `julia build_tarballs.jl --help` to see a usage message.
-using BinaryBuilder
+using BinaryBuilder, Pkg
 
-name = "EarCut"
-# use https://github.com/mapbox/earcut.hpp/releases/tag/v2.2.3
-version = v"2.2.3"
+name = "JonkerVolgenant"
+version = v"1.1.0"
+
+# Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/mapbox/earcut.hpp.git",
-              "b28acde132cdb8e0ef536a96ca7ada8a651f9169"),
-    DirectorySource("./bundled")
-
+    GitSource("https://github.com/fypc/Jonker-Volgenant.git", "8dd04610f678d7d35992ae4ad3af8f5eecc9b553")
 ]
 
 # Bash recipe for building across all platforms
 script = raw"""
-cp $WORKSPACE/srcdir/earcut.hpp/include/mapbox/earcut.hpp ./earcut.h
-mkdir "${libdir}"
-${CXX} -std=c++11 -fPIC -shared -o "${libdir}/libearcut.${dlext}" cwrapper.cpp
+cd $WORKSPACE/srcdir/Jonker-Volgenant/src
+mkdir -p "${libdir}"
+cc -I -Wall -std=c99 -shared -fPIC -O3 -o "${libdir}/bipartite_assignement.${dlext}" *.c
 """
 
 # These are the platforms we will build for by default, unless further
@@ -25,7 +23,7 @@ platforms = supported_platforms(; experimental=true)
 
 # The products that we will ensure are always built
 products = [
-    LibraryProduct("libearcut", :libearcut)
+    LibraryProduct("bipartite_assignement", :bipartite_assignement),
 ]
 
 # Dependencies that must be installed before this package can be built
