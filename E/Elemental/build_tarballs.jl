@@ -1,6 +1,6 @@
 # Note that this script can accept some limited command-line arguments, run
 # `julia build_tarballs.jl --help` to see a usage message.
-using BinaryBuilder
+using BinaryBuilder, Pkg
 
 name = "Elemental"
 version = v"0.87.7"
@@ -67,7 +67,10 @@ products = [
 # Dependencies that must be installed before this package can be built
 dependencies = [
     Dependency("METIS_jll"),
-    Dependency("MPICH_jll"),
+    # Dependency("MPICH_jll"),
+    Dependency(PackageSpec(name="MPItrampoline_jll",
+                           uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
+                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
     Dependency("OpenBLAS_jll"),
 ]
 

@@ -8,7 +8,7 @@ version = v"21.9.0"
 # Collection of sources required to complete build
 sources = [
     ArchiveSource("https://github.com/AMReX-Codes/amrex/releases/download/21.09/amrex-21.09.tar.gz",
-                  "9630b8c0c7ffbf3f5ea4d973a3fdb40b9b10fec0f8df33b9e24d76d2c1d15771"),
+                  "983b41d93bf9417c032080fd2ec7c04d0d2b820e613a076bd07566aa5a8aa4bd"),
     DirectorySource("./bundled"),
 ]
 
@@ -16,7 +16,8 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir
 cd amrex
-atomic_patch -p1 ${WORKSPACE}/srcdir/patches/jn.patch
+# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/jn.patch
+atomic_patch -p1 ${WORKSPACE}/srcdir/patches/mpi-constants.patch
 mkdir build
 cd build
 if [[ "$target" == *-apple-* ]]; then

@@ -3,14 +3,14 @@
 using BinaryBuilder, Pkg
 
 name = "MPItrampoline"
-version = v"1.1.0"
+version = v"2.0.0"
 
 # Collection of sources required to complete build
 sources = [
     # ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/refs/tags/v1.1.0.tar.gz",
     #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/e229b820b0a1b27d62a79a65745edbfc5f9ed9d6.tar.gz",
-                  "e0f548534d06c8c0393ad3e41545f34d9535089e273e98323f3722140c60f31d"),
+    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/c3c93a240c27f3fae48101eec10a63d64ebe49b4.tar.gz",
+                  "8e77dc91eacc1356cbe255523a89376557f2656447296a0bf9a51919e5fc4b00"),
 ]
 
 # Bash recipe for building across all platforms

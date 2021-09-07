@@ -24,6 +24,8 @@ FLAGS=(
     --disable-doc
     --enable-threads
     --with-combined-threads
+    MPILIBS=-lmpi
+    MPIRUN="${prefix}/bin/mpiexec"
 )
 
 # On intel processors, enable SSE2 and AVX2
@@ -66,6 +68,7 @@ build_fftw single --enable-single
 # Install both COPYING and COPYRIGHT in the license directory
 cd ${WORKSPACE}/srcdir/fftw*
 install_license COPYING COPYRIGHT
+# false
 """
 
 # These are the platforms we will build for by default, unless further
@@ -76,6 +79,8 @@ platforms = supported_platforms() # build on all supported platforms
 products = [
     LibraryProduct("libfftw3", :libfftw3),
     LibraryProduct("libfftw3f", :libfftw3f),
+    LibraryProduct("libfftw3_mpi", :libfftw3_mpi),
+    LibraryProduct("libfftw3f_mpi", :libfftw3f_mpi),
 ]
 
 # Dependencies that must be installed before this package can be built
