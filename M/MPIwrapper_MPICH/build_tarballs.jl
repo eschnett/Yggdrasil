@@ -23,22 +23,42 @@ suffix=so
 if [[ "${target}" == *-apple-* ]]; then
     suffix=dylib
 fi
-cmake \
-    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-    -DCMAKE_FIND_ROOT_PATH=$prefix \
-    -DCMAKE_INSTALL_PREFIX=$prefix \
-    -DBUILD_SHARED_LIBS=ON \
-    -DMPI_C_COMPILER=cc \
-    -DMPI_CXX_COMPILER=c++ \
-    -DMPI_Fortran_COMPILER=gfortran \
-    -DMPI_CXX_LIB_NAMES='mpicxx;mpi;pmpi' \
-    -DMPI_Fortran_LIB_NAMES='mpifort;mpi;pmpi' \
-    -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
-    -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
-    -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
-    -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.$suffix \
-    -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
-    ..
+# Yes, this is tedious. No, without being this explicit, cmake will
+# not properly auto-detect the MPI libraries.
+if [ -f $prefix/lib/libpmpi.$suffix ]; then
+    cmake \
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
+        -DCMAKE_FIND_ROOT_PATH=$prefix \
+        -DCMAKE_INSTALL_PREFIX=$prefix \
+        -DBUILD_SHARED_LIBS=ON \
+        -DMPI_C_COMPILER=cc \
+        -DMPI_CXX_COMPILER=c++ \
+        -DMPI_Fortran_COMPILER=gfortran \
+        -DMPI_CXX_LIB_NAMES='mpicxx;mpi;pmpi' \
+        -DMPI_Fortran_LIB_NAMES='mpifort;mpi;pmpi' \
+        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
+        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
+        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
+        -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.$suffix \
+        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
+        ..
+else
+    cmake \
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
+        -DCMAKE_FIND_ROOT_PATH=$prefix \
+        -DCMAKE_INSTALL_PREFIX=$prefix \
+        -DBUILD_SHARED_LIBS=ON \
+        -DMPI_C_COMPILER=cc \
+        -DMPI_CXX_COMPILER=c++ \
+        -DMPI_Fortran_COMPILER=gfortran \
+        -DMPI_CXX_LIB_NAMES='mpicxx;mpi' \
+        -DMPI_Fortran_LIB_NAMES='mpifort;mpi' \
+        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
+        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
+        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
+        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
+        ..
+fi
 cmake --build . --config RelWithDebInfo --parallel $nproc
 cmake --build . --config RelWithDebInfo --parallel $nproc --target install
 """
