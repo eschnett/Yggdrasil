@@ -12,16 +12,6 @@ script = raw"""
 # Enter the funzone
 cd ${WORKSPACE}/srcdir/mpich*
 
-if [[ "${target}" == powerpc64le-* ]]; then
-    # I don't understand why, but the extra link flags we append in the gfortran
-    # wrapper confuse the build system: the rule to build libmpifort has an
-    # extra lone `-l` flag, without any library to link to.  The following sed
-    # script basically reverts
-    # https://github.com/JuliaPackaging/BinaryBuilder.jl/pull/749, so that the
-    # extra link flags are not appended to the gfortran wrapper
-    sed -i 's/POST_FLAGS+.*/POST_FLAGS=()/g' /opt/bin/${target}*/gfortran
-fi
-
 EXTRA_FLAGS=()
 if [[ "${target}" != i686-linux-gnu ]] || [[ "${target}" != x86_64-linux-* ]]; then
     # Define some obscure undocumented variables needed for cross compilation of
@@ -29,14 +19,24 @@ if [[ "${target}" != i686-linux-gnu ]] || [[ "${target}" != x86_64-linux-* ]]; t
     # * https://stackoverflow.com/q/56759636/2442087
     # * https://github.com/pmodels/mpich/blob/d10400d7a8238dc3c8464184238202ecacfb53c7/doc/installguide/cfile
     export CROSS_F77_SIZEOF_INTEGER=4
-    export CROSS_F77_TRUE_VALUE=1
+    export CROSS_F77_SIZEOF_REAL=4
+    export CROSS_F77_SIZEOF_DOUBLE_PRECISION=8
     export CROSS_F77_FALSE_VALUE=0
+    export CROSS_F77_TRUE_VALUE=1
 
-    export CROSS_F90_ADDRESS_KIND=8
-    export CROSS_F90_OFFSET_KIND=8
+    if [[ ${nbits} == 32 ]]; then
+        export CROSS_F90_ADDRESS_KIND=4
+        export CROSS_F90_OFFSET_KIND=4
+    else
+        export CROSS_F90_ADDRESS_KIND=8
+        export CROSS_F90_OFFSET_KIND=8
+    fi
     export CROSS_F90_INTEGER_KIND=4
-    export CROSS_F90_DOUBLE_MODEL=15,307
+    export CROSS_F90_INTEGER_MODEL=9
     export CROSS_F90_REAL_MODEL=6,37
+    export CROSS_F90_DOUBLE_MODEL=15,307
+    export CROSS_F90_ALL_INTEGER_MODELS=2,1,4,2,9,4,18,8,
+    export CROSS_F90_INTEGER_MODEL_MAP={2,1,1},{4,2,2},{9,4,4},{18,8,8},
 
     if [[ "${target}" == i686-linux-musl ]]; then
         # Our `i686-linux-musl` platform is a bit rotten: it can run C programs,
@@ -56,9 +56,9 @@ if [[ "${target}" == aarch64-apple-* ]]; then
 fi
 
 if [[ "${target}" == *-apple-* ]]; then
-    # MPICH uses the link options `-flat_namespace` on Darwin. This conflicts
-    # with MPItrampoline, which requires the option
-    # `-twolevel_namespace` (which is also the default).
+    # MPICH uses the link options `-flat_namespace` on Darwin. This
+    # conflicts with MPItrampoline, which requires the option
+    # `-twolevel_namespace`.
     EXTRA_FLAGS+=(--enable-two-level-namespace)
 fi
 
@@ -67,6 +67,13 @@ fi
     --with-device=ch3 --disable-dependency-tracking \
     --docdir=/tmp \
     "${EXTRA_FLAGS[@]}"
+
+# Remove empty `-l` flags from libtool
+# (Why are they there? They should not be.)
+# Run the command several times to handle multiple (overlapping) occurrences.
+sed -i 's/"-l /"/g;s/ -l / /g;s/-l"/"/g' libtool
+sed -i 's/"-l /"/g;s/ -l / /g;s/-l"/"/g' libtool
+sed -i 's/"-l /"/g;s/ -l / /g;s/-l"/"/g' libtool
 
 # Build the library
 make -j${nproc}
