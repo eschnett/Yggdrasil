@@ -19,6 +19,10 @@ cd $WORKSPACE/srcdir
 cd MPIwrapper-*
 mkdir build
 cd build
+suffix=so
+if [[ "${target}" == *-apple-* ]]; then
+    suffix=dylib
+fi
 cmake \
     -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
     -DCMAKE_FIND_ROOT_PATH=$prefix \
@@ -29,10 +33,10 @@ cmake \
     -DMPI_Fortran_COMPILER=gfortran \
     -DMPI_CXX_LIB_NAMES='mpicxx;mpi;pmpi' \
     -DMPI_Fortran_LIB_NAMES='mpifort;mpi;pmpi' \
-    -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.dylib \
-    -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.dylib \
-    -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.dylib \
-    -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.dylib \
+    -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
+    -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
+    -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
+    -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.$suffix \
     -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
     ..
 cmake --build . --config RelWithDebInfo --parallel $nproc
