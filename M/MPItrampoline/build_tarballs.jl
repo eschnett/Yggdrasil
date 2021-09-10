@@ -9,8 +9,8 @@ version = v"2.0.0"
 sources = [
     # ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/refs/tags/v2.0.0.tar.gz",
     #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/ec27555bdfea067186d8be83713d28b0df60bad9.tar.gz",
-                  "7861b32ccdff76403636b7286ab5648c952d06b93dcd116298318fa9ed04c4dd"),
+    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/9c73b967c2b97b4256efcdddcd1365f2a9fa90b4.tar.gz",
+                  "850cde71bd8927e91e32172335da8594d4a80dc440aa34181aee69603bb7991d"),
 ]
 
 # Bash recipe for building across all platforms
