@@ -8,8 +8,8 @@ sources = [
     DirectorySource("./bundled"),
     # ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/refs/tags/v2.0.0.tar.gz",
     #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/2424e09675e405f1791a882ce46b29463554f640.tar.gz",
-                  "fe5b56dd21b841216d07e1b5865ec50cefcf157247717085debe80e969ca8c1f"),
+    ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/944befaecb0d1e7886222911cb96528df72af685.tar.gz",
+                  "d4cc2d7e2721f782873c59b1d55dab0fcd2b1b26ef883bfbe52d3e034509272e"),
 ]
 
 script = raw"""
