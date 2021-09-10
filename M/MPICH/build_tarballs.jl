@@ -6,9 +6,17 @@ version = v"3.4.2"
 sources = [
     ArchiveSource("https://www.mpich.org/static/downloads/$(version)/mpich-$(version).tar.gz",
                   "5c19bea8b84e8d74cca5f047e82b147ff3fba096144270e3911ad623d6c587bf"),
+    # ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/refs/tags/v2.0.0.tar.gz",
+    #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
+    ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/2424e09675e405f1791a882ce46b29463554f640.tar.gz",
+                  "fe5b56dd21b841216d07e1b5865ec50cefcf157247717085debe80e969ca8c1f"),
 ]
 
 script = raw"""
+################################################################################
+# Install MPICH
+################################################################################
+
 # Enter the funzone
 cd ${WORKSPACE}/srcdir/mpich*
 
@@ -62,10 +70,20 @@ if [[ "${target}" == *-apple-* ]]; then
     EXTRA_FLAGS+=(--enable-two-level-namespace)
 fi
 
-./configure --prefix=${prefix} --build=${MACHTYPE} --host=${target} \
-    --enable-shared=yes --enable-static=no \
-    --with-device=ch3 --disable-dependency-tracking \
+# Building with hwloc leads to problems loading the resulting
+# libraries and executable via MPIwrapper, because this happens
+# outside of Julia's control
+#    --with-hwloc-prefix=${prefix}
+
+./configure \
+    --prefix=${prefix} \
     --docdir=/tmp \
+    --build=${MACHTYPE} \
+    --host=${target} \
+    --disable-dependency-tracking \
+    --enable-shared=yes \
+    --enable-static=no \
+    --with-device=ch3 \
     "${EXTRA_FLAGS[@]}"
 
 # Remove empty `-l` flags from libtool
@@ -80,15 +98,72 @@ make -j${nproc}
 
 # Install the library
 make install
+
+################################################################################
+# Install MPIwrapper
+################################################################################
+
+cd $WORKSPACE/srcdir/MPIwrapper-*
+mkdir build
+cd build
+suffix=so
+if [[ "${target}" == *-apple-* ]]; then
+    suffix=dylib
+fi
+# Yes, this is tedious. No, without being this explicit, cmake will
+# not properly auto-detect the MPI libraries.
+if [ -f $prefix/lib/libpmpi.$suffix ]; then
+    cmake \
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
+        -DCMAKE_FIND_ROOT_PATH=$prefix \
+        -DCMAKE_INSTALL_PREFIX=$prefix \
+        -DBUILD_SHARED_LIBS=ON \
+        -DMPI_C_COMPILER=cc \
+        -DMPI_CXX_COMPILER=c++ \
+        -DMPI_Fortran_COMPILER=gfortran \
+        -DMPI_CXX_LIB_NAMES='mpicxx;mpi;pmpi' \
+        -DMPI_Fortran_LIB_NAMES='mpifort;mpi;pmpi' \
+        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
+        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
+        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
+        -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.$suffix \
+        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
+        ..
+else
+    cmake \
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
+        -DCMAKE_FIND_ROOT_PATH=$prefix \
+        -DCMAKE_INSTALL_PREFIX=$prefix \
+        -DBUILD_SHARED_LIBS=ON \
+        -DMPI_C_COMPILER=cc \
+        -DMPI_CXX_COMPILER=c++ \
+        -DMPI_Fortran_COMPILER=gfortran \
+        -DMPI_CXX_LIB_NAMES='mpicxx;mpi' \
+        -DMPI_Fortran_LIB_NAMES='mpifort;mpi' \
+        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
+        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
+        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
+        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
+        ..
+fi
+cmake --build . --config RelWithDebInfo --parallel $nproc
+cmake --build . --config RelWithDebInfo --parallel $nproc --target install
 """
 
-platforms = expand_gfortran_versions(filter!(!Sys.iswindows, supported_platforms(; experimental=true)))
+# These are the platforms we will build for by default, unless further
+# platforms are passed in on the command line.
+platforms = supported_platforms(; experimental=true)
+platforms = filter(!Sys.iswindows, platforms)
+platforms = expand_gfortran_versions(platforms)
 
 products = [
+    # MPICH
     LibraryProduct("libmpicxx", :libmpicxx),
     LibraryProduct("libmpifort", :libmpifort),
     LibraryProduct("libmpi", :libmpi),
     ExecutableProduct("mpiexec", :mpiexec),
+    # MPIwrapper
+    ExecutableProduct("mpiwrapperexec", :mpiwrapperexec),
 ]
 
 dependencies = [
