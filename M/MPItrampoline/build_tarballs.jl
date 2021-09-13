@@ -219,15 +219,15 @@ products = [
 
     # MPICH
     ExecutableProduct("mpiexec", :mpich_mpiexec; dir_paths="lib/mpich/bin"),
-    LibraryProduct("libmpi", :mpich_libmpi; dir_paths="lib/mpich/lib", dont_dlopen=true)
-    LibraryProduct("libmpicxx", :mpich_libmpicxx; dir_paths="lib/mpich/lib", dont_dlopen=true)
-    LibraryProduct("libmpifort", :mpich_libmpifort; dir_paths="lib/mpich/lib", dont_dlopen=true)
+    LibraryProduct("libmpi", :mpich_libmpi; dir_paths="lib/mpich/lib", dont_dlopen=true),
+    LibraryProduct("libmpicxx", :mpich_libmpicxx; dir_paths="lib/mpich/lib", dont_dlopen=true),
+    LibraryProduct("libmpifort", :mpich_libmpifort; dir_paths="lib/mpich/lib", dont_dlopen=true),
 
     # MPIwrapper
     ExecutableProduct("mpiwrapperexec", :mpiwrapperexec),
     # `libmpiwrapper` is a plugin, not a library, and thus has the
     # suffix `.so` on macOS. Thsi confuses BinaryBuilder.
-    # LibraryProduct("libmpiwrapper", :libmpiwrapper; dont_dlopen=true)
+    # LibraryProduct("libmpiwrapper", :libmpiwrapper; dont_dlopen=true),
 ]
 
 # Dependencies that must be installed before this package can be built
