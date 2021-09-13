@@ -6,17 +6,9 @@ version = v"3.4.2"
 sources = [
     ArchiveSource("https://www.mpich.org/static/downloads/$(version)/mpich-$(version).tar.gz",
                   "5c19bea8b84e8d74cca5f047e82b147ff3fba096144270e3911ad623d6c587bf"),
-    # ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/refs/tags/v2.0.0.tar.gz",
-    #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPIwrapper/archive/944befaecb0d1e7886222911cb96528df72af685.tar.gz",
-                  "d4cc2d7e2721f782873c59b1d55dab0fcd2b1b26ef883bfbe52d3e034509272e"),
 ]
 
 script = raw"""
-################################################################################
-# Install MPICH
-################################################################################
-
 # Enter the funzone
 cd ${WORKSPACE}/srcdir/mpich*
 
@@ -70,10 +62,6 @@ if [[ "${target}" == *-apple-* ]]; then
     EXTRA_FLAGS+=(--enable-two-level-namespace)
 fi
 
-# Building with hwloc leads to problems loading the resulting
-# libraries and executable via MPIwrapper, because this happens
-# outside of Julia's control
-#    --with-hwloc-prefix=${prefix}
 
 ./configure \
     --prefix=${prefix} \
@@ -84,6 +72,7 @@ fi
     --enable-shared=yes \
     --enable-static=no \
     --with-device=ch3 \
+    --with-hwloc-prefix=${prefix}
     "${EXTRA_FLAGS[@]}"
 
 # Remove empty `-l` flags from libtool
@@ -98,56 +87,6 @@ make -j${nproc}
 
 # Install the library
 make install
-
-################################################################################
-# Install MPIwrapper
-################################################################################
-
-cd $WORKSPACE/srcdir/MPIwrapper-*
-mkdir build
-cd build
-suffix=so
-if [[ "${target}" == *-apple-* ]]; then
-    suffix=dylib
-fi
-# Yes, this is tedious. No, without being this explicit, cmake will
-# not properly auto-detect the MPI libraries.
-if [ -f $prefix/lib/libpmpi.$suffix ]; then
-    cmake \
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-        -DCMAKE_FIND_ROOT_PATH=$prefix \
-        -DCMAKE_INSTALL_PREFIX=$prefix \
-        -DBUILD_SHARED_LIBS=ON \
-        -DMPI_C_COMPILER=cc \
-        -DMPI_CXX_COMPILER=c++ \
-        -DMPI_Fortran_COMPILER=gfortran \
-        -DMPI_CXX_LIB_NAMES='mpicxx;mpi;pmpi' \
-        -DMPI_Fortran_LIB_NAMES='mpifort;mpi;pmpi' \
-        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
-        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
-        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
-        -DMPI_pmpi_LIBRARY=$prefix/lib/libpmpi.$suffix \
-        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
-        ..
-else
-    cmake \
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-        -DCMAKE_FIND_ROOT_PATH=$prefix \
-        -DCMAKE_INSTALL_PREFIX=$prefix \
-        -DBUILD_SHARED_LIBS=ON \
-        -DMPI_C_COMPILER=cc \
-        -DMPI_CXX_COMPILER=c++ \
-        -DMPI_Fortran_COMPILER=gfortran \
-        -DMPI_CXX_LIB_NAMES='mpicxx;mpi' \
-        -DMPI_Fortran_LIB_NAMES='mpifort;mpi' \
-        -DMPI_mpi_LIBRARY=$prefix/lib/libmpi.$suffix \
-        -DMPI_mpicxx_LIBRARY=$prefix/lib/libmpicxx.$suffix \
-        -DMPI_mpifort_LIBRARY=$prefix/lib/libmpifort.$suffix \
-        -DMPIEXEC_EXECUTABLE=$prefix/bin/mpiexec \
-        ..
-fi
-cmake --build . --config RelWithDebInfo --parallel $nproc
-cmake --build . --config RelWithDebInfo --parallel $nproc --target install
 """
 
 # These are the platforms we will build for by default, unless further
@@ -162,12 +101,11 @@ products = [
     LibraryProduct("libmpifort", :libmpifort),
     LibraryProduct("libmpi", :libmpi),
     ExecutableProduct("mpiexec", :mpiexec),
-    # MPIwrapper
-    ExecutableProduct("mpiwrapperexec", :mpiwrapperexec),
 ]
 
 dependencies = [
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae")),
+    Dependency("Hwloc_jll"),
 ]
 
 # Build the tarballs.
