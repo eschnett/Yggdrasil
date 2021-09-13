@@ -218,7 +218,7 @@ products = [
     LibraryProduct("libmpi", :libmpi),
 
     # MPICH
-    ExecutableProduct("mpiexec", :mpich_mpiexec; dir_path="lib/mpich/bin"),
+    ExecutableProduct("mpiexec", :mpich_mpiexec, "lib/mpich/bin"),
     LibraryProduct("libmpi", :mpich_libmpi; dir_paths=["lib/mpich/lib"], dont_dlopen=true),
     LibraryProduct("libmpicxx", :mpich_libmpicxx; dir_paths=["lib/mpich/lib"], dont_dlopen=true),
     LibraryProduct("libmpifort", :mpich_libmpifort; dir_paths=["lib/mpich/lib"], dont_dlopen=true),
