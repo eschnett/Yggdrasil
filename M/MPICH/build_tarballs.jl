@@ -62,7 +62,6 @@ if [[ "${target}" == *-apple-* ]]; then
     EXTRA_FLAGS+=(--enable-two-level-namespace)
 fi
 
-
 ./configure \
     --prefix=${prefix} \
     --docdir=/tmp \
@@ -72,7 +71,7 @@ fi
     --enable-shared=yes \
     --enable-static=no \
     --with-device=ch3 \
-    --with-hwloc-prefix=${prefix}
+    --with-hwloc-prefix=${prefix} \
     "${EXTRA_FLAGS[@]}"
 
 # Remove empty `-l` flags from libtool
