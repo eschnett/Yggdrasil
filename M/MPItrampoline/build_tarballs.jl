@@ -9,8 +9,8 @@ version = v"2.0.0"
 sources = [
     # ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/refs/tags/v2.0.0.tar.gz",
     #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/9c73b967c2b97b4256efcdddcd1365f2a9fa90b4.tar.gz",
-                  "850cde71bd8927e91e32172335da8594d4a80dc440aa34181aee69603bb7991d"),
+    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/a51d2007e5506f3bb3a3bdfb3102b4028aaa09cb.tar.gz",
+                  "7e05ed4341ac234e2bda9220a79ecf0b9c523c83ed2b7ae8e68859403a19afcc"),
     # ArchiveSource("https://download.open-mpi.org/release/hwloc/v2.5/hwloc-2.5.0.tar.bz2",
     #               "a9cf9088be085bdd167c78b73ddf94d968fa73a8ccf62172481ba9342c4f52c8"),
     ArchiveSource("https://www.mpich.org/static/downloads/3.4.2/mpich-3.4.2.tar.gz",
@@ -27,6 +27,12 @@ script = raw"""
 # MPItrampoline
 ################################################################################
 
+# File suffix for shared libraries
+suffix=so
+if [[ "${target}" == *-apple-* ]]; then
+    suffix=dylib
+fi
+
 cd $WORKSPACE/srcdir/MPItrampoline-*
 mkdir build
 cd build
@@ -35,6 +41,8 @@ cmake \
     -DCMAKE_FIND_ROOT_PATH=$prefix \
     -DCMAKE_INSTALL_PREFIX=$prefix \
     -DBUILD_SHARED_LIBS=ON \
+    -DMPITRAMPOLINE_LIB="@MPITRAMPOLINE_DIR@/lib/libmpiwrapper.so" \
+    -DMPITRAMPOLINE_PRELOAD="@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpi.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpicxx.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpifort.${suffix}" \
     ..
 cmake --build . --config RelWithDebInfo --parallel $nproc
 cmake --build . --config RelWithDebInfo --parallel $nproc --target install
@@ -145,10 +153,6 @@ make -j${nproc} install
 cd $WORKSPACE/srcdir/MPIwrapper-*
 mkdir build
 cd build
-suffix=so
-if [[ "${target}" == *-apple-* ]]; then
-    suffix=dylib
-fi
 # Yes, this is tedious. No, without being this explicit, cmake will
 # not properly auto-detect the MPI libraries.
 if [ -f ${prefix}/lib/mpich/lib/libpmpi.${suffix} ]; then
@@ -185,8 +189,6 @@ else
         -DMPIEXEC_EXECUTABLE=${prefix}/lib/mpich/bin/mpiexec \
         ..
 fi
-
-# TODO: Update mpiwrapperexec to set all necessary environment variables
 
 cmake --build . --config RelWithDebInfo --parallel $nproc
 cmake --build . --config RelWithDebInfo --parallel $nproc --target install
@@ -226,7 +228,7 @@ products = [
     # MPIwrapper
     ExecutableProduct("mpiwrapperexec", :mpiwrapperexec),
     # `libmpiwrapper` is a plugin, not a library, and thus has the
-    # suffix `.so` on macOS. Thsi confuses BinaryBuilder.
+    # suffix `.so` on macOS. This confuses BinaryBuilder.
     # LibraryProduct("libmpiwrapper", :libmpiwrapper; dont_dlopen=true),
 ]
 
