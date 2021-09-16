@@ -41,8 +41,8 @@ cmake \
     -DCMAKE_FIND_ROOT_PATH=$prefix \
     -DCMAKE_INSTALL_PREFIX=$prefix \
     -DBUILD_SHARED_LIBS=ON \
-    -DMPITRAMPOLINE_LIB="@MPITRAMPOLINE_DIR@/lib/libmpiwrapper.so" \
-    -DMPITRAMPOLINE_PRELOAD="@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpi.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpicxx.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpifort.${suffix}" \
+    -DMPITRAMPOLINE_DEFAULT_LIB="@MPITRAMPOLINE_DIR@/lib/libmpiwrapper.so" \
+    -DMPITRAMPOLINE_DEFAULT_PRELOAD="@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpi.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpicxx.${suffix}:@MPITRAMPOLINE_DIR@/lib/mpich/lib/libmpifort.${suffix}" \
     ..
 cmake --build . --config RelWithDebInfo --parallel $nproc
 cmake --build . --config RelWithDebInfo --parallel $nproc --target install
