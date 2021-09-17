@@ -13,8 +13,8 @@ sources = [
     #               "46c013be5cda670f21969675ce839315d4f5ada0406a6546a91ec3441402cf5e"),
     # We temporarily use a feature branch instead of a released
     # version because the Julia bindings are not release yet
-    ArchiveSource("https://github.com/eschnett/openPMD-api/archive/46a7b004f494bc036ecfef52e6b00f04fd4e232e.tar.gz",
-                  "cc961ae51074e713cb9839ca6078af1cfccba376857b4e7c02efb50d83bfcde8"),
+    ArchiveSource("https://github.com/eschnett/openPMD-api/archive/5c192e31e4fdd66d3eb85881a7bf700ddc34207d.tar.gz",
+                  "a1d93cee537eecc00ed62b62cb5a764781ffba338cecbbf96452878b27d03cdb"),
 ]
 
 # Bash recipe for building across all platforms
@@ -46,7 +46,7 @@ fi
 cmake \
     -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
     -DCMAKE_FIND_ROOT_PATH=$prefix \
-    -DopenPMD_USE_JULIA=ON \
+    -DopenPMD_USE_Julia=ON \
     -DJulia_PREFIX=$prefix \
     -DopenPMD_USE_MPI=ON \
     -DMPI_HOME=$prefix \
@@ -70,7 +70,7 @@ platforms = expand_cxxstring_abis(platforms)
 # The products that we will ensure are always built
 products = [
     LibraryProduct("libopenPMD", :libopenPMD),
-    LibraryProduct("libopenPMD_jl", :libopenPMD_jl),
+    LibraryProduct("libopenPMD.jl", :libopenPMD_jl),
 ]
 
 # Dependencies that must be installed before this package can be built
