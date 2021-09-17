@@ -9,8 +9,8 @@ version = v"2.0.0"
 sources = [
     # ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/refs/tags/v2.0.0.tar.gz",
     #               "67fdb710d1ca49487593a9c023e94aa8ff0bec56de6005d1a437fca40833def9"),
-    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/4f118572aaa1b38c54fc4de8954bfadc01571e05.tar.gz",
-                  "b101790759f88d2d1336ae28f564fc936884b6a0579160859845f449518f6723"),
+    ArchiveSource("https://github.com/eschnett/MPItrampoline/archive/74815f9701f638492565bc4b0256ef1fc03ec93d.tar.gz",
+                  "e2f9c246c95bd1fd7952a6d6da07061af8b72c8d10aaca4ad23c2218b5d11329"),
     # ArchiveSource("https://download.open-mpi.org/release/hwloc/v2.5/hwloc-2.5.0.tar.bz2",
     #               "a9cf9088be085bdd167c78b73ddf94d968fa73a8ccf62172481ba9342c4f52c8"),
     ArchiveSource("https://www.mpich.org/static/downloads/3.4.2/mpich-3.4.2.tar.gz",
