@@ -85,9 +85,7 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = Dependency[
-    Dependency(PackageSpec(name="MPItrampoline_jll",
-                           uuid="f1f71cc9-e9ae-5b93-9b94-4fe0e1ad3748",
-                           path="$(ENV["HOME"])/.julia/dev/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 
