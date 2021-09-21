@@ -1,39 +1,35 @@
 # Note that this script can accept some limited command-line arguments, run
 # `julia build_tarballs.jl --help` to see a usage message.
-using BinaryBuilder
+using BinaryBuilder, Pkg
 
-name = "alsa"
-# It's actually v1.2.5.1
-version = v"1.2.5"
+name = "TMatrix"
+version = v"0.1.0"
 
 # Collection of sources required to complete build
 sources = [
-    ArchiveSource("https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.5.1.tar.bz2",
-                  "628421d950cecaf234de3f899d520c0a6923313c964ad751ffac081df331438e"),
+    GitSource("https://github.com/JuliaRemoteSensing/TMatrix-fortran.git", "bf0d1bf15ff382b562427492895f8f3d0fb6b177")
 ]
 
 # Bash recipe for building across all platforms
 script = raw"""
-cd $WORKSPACE/srcdir/alsa-lib*/
-./configure --prefix=${prefix} --build=${MACHTYPE} --host=${target}
-make
-make install
+cd $WORKSPACE/srcdir/TMatrix-fortran/
+mkdir build && cd build
+meson --cross-file=${MESON_TARGET_TOOLCHAIN}
+meson install
 """
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
-platforms = filter(Sys.islinux, supported_platforms(;experimental=true))
+platforms = expand_gfortran_versions(supported_platforms(;experimental=true))
 
 # The products that we will ensure are always built
 products = [
-    LibraryProduct("libasound", :libasound),
-    LibraryProduct("libatopology", :libatopology),
+    LibraryProduct("libtmatrixro", :tmatrix_random_orientation),
+    LibraryProduct("libtmatrixfo", :tmatrix_fixed_orientation)
 ]
 
 # Dependencies that must be installed before this package can be built
-dependencies = [
-]
+dependencies = [Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae"))]
 
 # Build the tarballs, and possibly a `build.jl` as well.
 build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies; julia_compat="1.6")
-
