@@ -74,7 +74,7 @@ dependencies = [
     # AMReX's cmake stage fails with OpenMPI on almost all architectures
     # Dependency(PackageSpec(name="OpenMPI_jll", uuid="fe0851c0-eecd-5654-98d4-656369965a5c")),
     #TODO Dependency(PackageSpec(name="MPICH_jll")),
-    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll.jl")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 

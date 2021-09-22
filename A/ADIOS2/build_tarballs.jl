@@ -125,7 +125,7 @@ dependencies = [
     # We cannot use HDF5 because we need an HDF5 configuration with MPI support
     # Dependency(PackageSpec(name="HDF5_jll")),
     #TODO Dependency(PackageSpec(name="MPICH_jll")),
-    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll.jl")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
     Dependency(PackageSpec(name="ZeroMQ_jll")),
     Dependency(PackageSpec(name="libpng_jll")),

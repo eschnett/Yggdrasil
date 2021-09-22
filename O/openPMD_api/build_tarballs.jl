@@ -77,12 +77,12 @@ products = [
 dependencies = [
     BuildDependency(PackageSpec(name="libjulia_jll", version=julia_version)),
     #TODO Dependency(PackageSpec(name="ADIOS2_jll")),
-    Dependency(PackageSpec(name="ADIOS2_jll", url="https://github.com/eschnett/ADIOS2_jll")),
+    Dependency(PackageSpec(name="ADIOS2_jll", url="https://github.com/eschnett/ADIOS2_jll.jl")),
     Dependency(PackageSpec(name="CompilerSupportLibraries_jll", uuid="e66e0078-7015-5450-92f7-15fbd957f2ae")),
     # We would need a parallel version of HDF5
     # Dependency(PackageSpec(name="HDF5_jll")),
     #TODO Dependency(PackageSpec(name="MPICH_jll")),
-    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll.jl")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
     Dependency(PackageSpec(name="libcxxwrap_julia_jll")),
 ]

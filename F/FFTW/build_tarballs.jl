@@ -85,7 +85,7 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = Dependency[
-    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll")),
+    Dependency(PackageSpec(name="MPItrampoline_jll", url="https://github.com/eschnett/MPItrampoline_jll.jl")),
     Dependency(PackageSpec(name="MicrosoftMPI_jll")),
 ]
 
