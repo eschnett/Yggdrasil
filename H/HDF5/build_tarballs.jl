@@ -23,7 +23,7 @@ echo proc_family: ${proc_family}
 echo target: ${target}
 
 if [[ "${target}" == *-mingw* ]]; then
-    cp ${WORKSPACE}/srcdir/headers/pthread_time.h /opt/x86_64-w64-mingw32/x86_64-w64-mingw32/sys-root/include/pthread_time.h
+    cp ${WORKSPACE}/srcdir/headers/pthread_time.h "/opt/${target}/${target}/sys-root/include/pthread_time.h"
     atomic_patch -p1 ${WORKSPACE}/srcdir/patches/h5ls.c.patch
     atomic_patch -p1 ${WORKSPACE}/srcdir/patches/mkdir.patch
     atomic_patch -p1 ${WORKSPACE}/srcdir/patches/strncpy.patch
